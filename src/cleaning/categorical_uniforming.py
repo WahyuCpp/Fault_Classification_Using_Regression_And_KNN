@@ -1,6 +1,8 @@
 # Membuat salinan DataFrame untuk operasi pembersihan
-df_kotor = pd.read_csv('data/test_Data.csv')
-df_bersih = df_kotor.copy()
+# Penyeragaman kategorikal
+
+# df_kotor = pd.read_csv('data/test_Data.csv')
+# df_bersih = df_kotor.copy()
 
 # 3. Penyeragaman Nilai Kategorikal
 # Menyatukan kategori pendidikan yang serupa: 'Sarjana', 'Bachelor', 'S1' menjadi 'S1'

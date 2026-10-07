@@ -183,7 +183,7 @@ logs/
 *.sqlite3
 
 # Local datasets that may contain real device/user data
-# data/
+data/
 dataset/
 datasets/
 private_data/
@@ -235,6 +235,3 @@ tmp/
 #======================================
 #UNNECESSARY
 #======================================
-images/
-fft_test.py
-

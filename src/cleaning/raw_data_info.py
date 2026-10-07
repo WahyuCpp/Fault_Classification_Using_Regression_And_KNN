@@ -3,7 +3,7 @@ import io
 import numpy as np
 
 # Baca file CSV ke DataFrame
-df_kotor = pd.read_csv('data/raw/E001r.csv')
+df_kotor = pd.read_csv('data/raw/E002r.csv')
 
 # Tampilkan informasi dasar tentang DataFrame
 print("Informasi DataFrame:")
@@ -28,7 +28,7 @@ print(df_kotor.describe())
 
 # 4. Statistik Deskriptif untuk kolom kategorikal (object)
 print("\nStatistik deskriptif untuk kolom kategorikal:")
-print(df_kotor.describe(include='object'))
+print(df_kotor.describe(include=['object']))
 
 # 5. Distribusi nilai unik pada kolom kategorikal (opsional, jika ingin melihat lebih detail)
 print("\nDistribusi nilai unik pada kolom 'X':")
