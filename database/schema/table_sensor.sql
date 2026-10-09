@@ -1,0 +1,34 @@
+CREATE TABLE IF NOT EXISTS accelerometer_x (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    value FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS accelerometer_y (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    value FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS accelerometer_z (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    value FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS motor_winding_temperature (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    value FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS motor_winding_current (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    value FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

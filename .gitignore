@@ -41,33 +41,6 @@ id_rsa.pub
 id_ed25519
 id_ed25519.pub
 
-
-# ============================================================
-# KICAD
-# ============================================================
-
-# Local/session files
-*.kicad_prl
-*.kicad_lck
-*.lck
-
-# Backup files
-*.kicad_pro-bak
-*.kicad_sch-bak
-*.kicad_pcb-bak
-
-# KiCad cache
-fp-info-cache
-
-# Keep project source files:
-# *.kicad_pro   <- DO NOT ignore
-# *.kicad_sch   <- DO NOT ignore
-# *.kicad_pcb   <- DO NOT ignore
-
-# Theia workspace/editor
-.theia/
-
-
 # ============================================================
 # PLATFORMIO / ESP32
 # ============================================================
@@ -181,6 +154,8 @@ logs/
 *.db
 *.sqlite
 *.sqlite3
+# .sql
+# *.sql
 
 # Local datasets that may contain real device/user data
 data/
@@ -203,35 +178,7 @@ tmp/
 *.backup
 *.old
 
-
-# ============================================================
-# LATEX
-# ============================================================
-
-# Build artifacts
-*.aux
-*.log
-*.out
-*.toc
-*.lof
-*.lot
-*.fls
-*.fdb_latexmk
-*.synctex.gz
-*.bbl
-*.bcf
-*.blg
-*.run.xml
-
-# LaTeX temporary files
-*.nav
-*.snm
-*.vrb
-
-# Generated PDFs:
-# Uncomment this ONLY if PDFs should not be version-controlled
-# *.pdf
-
 #======================================
 #UNNECESSARY
 #======================================
+#.pdf
