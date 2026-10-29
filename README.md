@@ -263,19 +263,19 @@ Firmware can be compiled and uploaded using either Arduino IDE or PlatformIO, su
 | No. | Development Task | Status |
 |---|---|---|
 | 1 | Data Cleaning | Completed |
-| 2 | MySQL Database Initialization | In Progress |
-| 3 | Exploratory Data Analysis (EDA) | Pending |
-| 4 | Feature Engineering and Extraction | Pending |
-| 5 | KNN Fault Classification | Pending |
+| 2 | MySQL Database Initialization | Completed |
+| 3 | Exploratory Data Analysis (EDA) | Completed |
+| 4 | Feature Engineering and Extraction | Testing |
+| 5 | KNN Fault Classification | Testing |
 | 6 | Linear Regression for Degradation Prediction | Pending |
 | 7 | Embedded Firmware Development | Pending |
-| 8 | Frontend Development using npm | Pending |
-| 9 | Backend and Database Integration | Pending |
+| 8 | Frontend Development using npm | Testing |
+| 9 | Backend and Database Integration | Testing |
 | 10 | System Integration and Validation | Pending |
 
 ## Development Status
 
-**Current Phase: Signal Processing Handling**
+**Current Phase: Signal Processing Handling Tasting**
 
 The project is not yet a fully operational motor fault classification system.
 
@@ -285,6 +285,7 @@ Completed work:
 - Database initialization.
 - Exploratory Data Analysis (EDA).
 - KNN classifier
+
 Ongoing work:
 
 - Advanced fault frequency signature bugfixes.
