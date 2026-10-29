@@ -1,6 +1,6 @@
-# Motor Faults Classification Using KNN
+# MONTREAL-VT
 
-**An IoT-based motor condition monitoring, fault classification, and predictive maintenance system using K-Nearest Neighbors (KNN) and Linear Regression.**
+**An IoT system using integrated sensor system to continuously monitor and classify faults on induction motor**
 
 ## Project Overview
 
@@ -8,13 +8,14 @@ This project aims to develop an integrated motor condition monitoring system cap
 
 The system combines **embedded firmware, signal processing, relational database management, exploratory data analysis (EDA), supervised machine learning, and web-based visualization**.
 
-Two primary machine learning approaches are planned:
+Four machine learning approach are planned to be implemented on this project:
 
-- **K-Nearest Neighbors (KNN):** Classifies motor possible faults based on extracted sensor features.
+- **Decision Tree:** Faults classification
+- **K-Nearest Neighbors (KNN):** Faults classification
 - **Linear Regression:** Models historical condition indicators to estimate degradation trends and remaining useful life.
 
 The project is currently **under active development**. 
-<!-- Data cleaning has been completed, while MySQL database initialization is in progress. Other subsystems are scheduled for subsequent development. -->
+
 
 ## Technology Stack
 
@@ -40,14 +41,14 @@ The proposed system follows a modular architecture:
               SENSOR ACQUISITION
                       |
                       v
-             EMBEDDED FIRMWARE
-             Arduino / PlatformIO
+              EMBEDDED FIRMWARE
+              Arduino IDE / PlatformIO
                       |
                       v
               BACKEND / API
                       |
                       v
-                MySQL DATABASE
+              MySQL DATABASE
                       |
           +-----------+-----------+
           |                       |
@@ -240,40 +241,7 @@ Motor-Faults-Classification-Using-KNN/
 
 ## Installation and Development Setup
 
-The following commands describe the intended development workflow. They are not yet verified installation instructions for the complete system.
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/mwahyufaa/Fault_Classification_Using_egression_And_KNN.git
-cd Fault_Classification_Using_egression_And_KNN
-```
-
-### Python Environment
-
-Create and activate a virtual environment:
-
-```bash
-python -m venv .venv
-```
-
-Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-Linux/macOS:
-
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies once `requirements.txt` has been configured:
-
-```bash
-pip install -r requirements.txt
-```
+1. Run setup.ps1
 
 ### MySQL Database
 
@@ -283,17 +251,10 @@ Once available, the database can be initialized using the project's SQL scripts 
 
 ### Frontend
 
-When the frontend package is available:
+1. Run run.ps1
+2. Ctrl+Click on localhost link.
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The development command may change depending on the selected frontend framework and configured npm scripts.
-
-### Firmware
+### Firmware (Coming Soon)
 
 Firmware can be compiled and uploaded using either Arduino IDE or PlatformIO, subject to the selected microcontroller and hardware configuration.
 
@@ -321,16 +282,19 @@ The project is not yet a fully operational motor fault classification system.
 Completed work:
 
 - Initial dataset cleaning and preparation.
-
+- Database initialization.
+- Exploratory Data Analysis (EDA).
+- KNN classifier
 Ongoing work:
 
-- MySQL database initialization.
+- Advanced fault frequency signature bugfixes.
+- Vibration severity trend bugfixes.
+- Temperature trend bugfixes.
+- Winding current trend bugfixes.
 
 Upcoming priorities:
 
-- Exploratory Data Analysis.
-- Feature engineering.
-- KNN classifier development.
+- Login authorization
 - Regression-based condition trend analysis.
 - Embedded firmware and monitoring interface implementation.
 
