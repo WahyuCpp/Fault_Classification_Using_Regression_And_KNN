@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}MONTREAL-VT Database Inspection{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+    <!-- Header Summary Card -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <span>Database Inspection & Record Management</span>
+                <span class="badge-custom badge-info" id="dbTypeBadge">Database Engine</span>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-3">
+                        <div class="stat-label">Total Stored Readings</div>
+                        <div class="stat-value text-info" id="totalRecordsCount">0</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-label">Table Name</div>
+                        <div class="small text-white"><code>MONTREAL_VT_reading_data</code></div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="/api/database/export" class="btn btn-outline-info btn-sm me-2">
+                            📥 Export All to CSV
+                        </a>
+                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            🗑 Delete Historical Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters Bar -->
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form id="filterForm" class="row g-2 align-items-center">
+            <div class="col-md-3">
+                <label class="small text-muted mb-1">Machine ID</label>
+                <select id="filterMachine" class="form-select-dark w-100">
+                    <option value="">All Machines</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="small text-muted mb-1">Fault Class</label>
+                <select id="filterFault" class="form-select-dark w-100">
+                    <option value="">All Classes</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="small text-muted mb-1">Limit</label>
+                <select id="filterLimit" class="form-select-dark w-100">
+                    <option value="50">Latest 50 records</option>
+                    <option value="100" selected>Latest 100 records</option>
+                    <option value="500">Latest 500 records</option>
+                    <option value="1000">Latest 1000 records</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary btn-sm w-100">Apply Filters</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Records Table -->
+<div class="card">
+    <div class="card-header">
+        <span>Continuous Sensor Readings</span>
+        <button id="btnRefreshTable" class="btn btn-sm btn-outline-secondary">Refresh</button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive" style="max-height: 550px;">
+            <table class="table-dark-custom mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Machine</th>
+                        <th>Source File</th>
+                        <th>Timestamp</th>
+                        <th>Acc X</th>
+                        <th>Acc Y</th>
+                        <th>Acc Z</th>
+                        <th>Current (A)</th>
+                        <th>Temp (°C)</th>
+                        <th>RPM</th>
+                        <th>Class</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsTableBody">
+                    <tr><td colspan="11" class="text-center text-muted py-3">Loading stored records...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Historical Data Modal with Explicit Confirmation -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background: #1e293b; color: #f8fafc; border: 1px solid #dc2626;">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-danger">Confirm Destructive Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>This action will permanently purge all sensor readings from <code>MONTREAL_VT_reading_data</code>.</p>
+                <p class="small text-warning">Per Section 50 requirements, historical records are preserved indefinitely until manual deletion is explicitly confirmed.</p>
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Type <strong>CONFIRM_DELETE</strong> to proceed:</label>
+                    <input type="text" id="confirmDeleteInput" class="form-control" style="background:#0f172a; color:white; border-color:#475569;">
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="btnConfirmDelete" class="btn btn-danger btn-sm" disabled>Delete All Records</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadTable() {
+    const machine = document.getElementById('filterMachine').value;
+    const fault = document.getElementById('filterFault').value;
+    const limit = document.getElementById('filterLimit').value;
+
+    const url = `/api/database/records?limit=${limit}&machine_id=${machine}&fault_label=${fault}`;
+    const res = await fetch(url);
+    if (!res.ok) return;
+    const data = await res.json();
+
+    document.getElementById('totalRecordsCount').innerText = data.total_count || 0;
+    document.getElementById('dbTypeBadge').innerText = data.db_type || 'Active DB';
+
+    const tbody = document.getElementById('recordsTableBody');
+    if (!data.records || data.records.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="text-center text-muted py-3">No stored readings found.</td></tr>';
+        return;
+    }
+
+    let rows = '';
+    for (const r of data.records) {
+        rows += `
+            <tr>
+                <td>${r.id}</td>
+                <td>${r.machine_id}</td>
+                <td class="small text-muted">${r.source_file || '-'}</td>
+                <td class="font-monospace small">${r.timestamp}</td>
+                <td>${r.x.toFixed(3)}</td>
+                <td>${r.y.toFixed(3)}</td>
+                <td>${r.z.toFixed(3)}</td>
+                <td>${r.current.toFixed(2)}</td>
+                <td>${r.temperature.toFixed(1)}</td>
+                <td>${r.rpm ? r.rpm.toFixed(0) : '-'}</td>
+                <td><span class="badge-custom badge-info">${r.fault_label}</span></td>
+            </tr>
+        `;
+    }
+    tbody.innerHTML = rows;
+}
+
+// Populate filters
+async function loadMetadata() {
+    const res = await fetch('/api/database/metadata');
+    if (res.ok) {
+        const data = await res.json();
+        const mSelect = document.getElementById('filterMachine');
+        for (const m of data.machines || []) {
+            const opt = document.createElement('option');
+            opt.value = m; opt.innerText = m;
+            mSelect.appendChild(opt);
+        }
+        const fSelect = document.getElementById('filterFault');
+        for (const f of data.fault_labels || []) {
+            const opt = document.createElement('option');
+            opt.value = f; opt.innerText = f;
+            fSelect.appendChild(opt);
+        }
+    }
+}
+
+document.getElementById('filterForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    loadTable();
+});
+document.getElementById('btnRefreshTable').addEventListener('click', loadTable);
+
+// Confirm Delete input check
+const confirmInput = document.getElementById('confirmDeleteInput');
+const btnConfirm = document.getElementById('btnConfirmDelete');
+confirmInput.addEventListener('input', () => {
+    btnConfirm.disabled = (confirmInput.value.trim() !== 'CONFIRM_DELETE');
+});
+
+btnConfirm.addEventListener('click', async () => {
+    const res = await fetch('/api/database/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: true })
+    });
+    if (res.ok) {
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+        confirmInput.value = '';
+        btnConfirm.disabled = true;
+        loadTable();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadMetadata();
+    loadTable();
+});
+</script>
+{% endblock %}
+

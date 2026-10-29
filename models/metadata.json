@@ -1,0 +1,571 @@
+{
+  "logistic_regression": {
+    "model_file": "logistic_regression.joblib",
+    "model_version": "1.0.0",
+    "training_date": "2026-10-12 14:34:28 UTC",
+    "feature_names": [
+      "x_mean_approx",
+      "x_std_approx",
+      "x_var_approx",
+      "x_rms_approx",
+      "x_kurt_approx",
+      "x_skew_approx",
+      "x_zcr_approx",
+      "x_mcr_approx",
+      "x_entropy_approx",
+      "x_mean_d1",
+      "x_std_d1",
+      "x_var_d1",
+      "x_rms_d1",
+      "x_kurt_d1",
+      "x_skew_d1",
+      "x_entropy_d1",
+      "x_hilbert_mean",
+      "x_hilbert_std",
+      "y_mean_approx",
+      "y_std_approx",
+      "y_var_approx",
+      "y_rms_approx",
+      "y_kurt_approx",
+      "y_skew_approx",
+      "y_zcr_approx",
+      "y_mcr_approx",
+      "y_entropy_approx",
+      "y_mean_d1",
+      "y_std_d1",
+      "y_var_d1",
+      "y_rms_d1",
+      "y_kurt_d1",
+      "y_skew_d1",
+      "y_entropy_d1",
+      "y_hilbert_mean",
+      "y_hilbert_std",
+      "z_mean_approx",
+      "z_std_approx",
+      "z_var_approx",
+      "z_rms_approx",
+      "z_kurt_approx",
+      "z_skew_approx",
+      "z_zcr_approx",
+      "z_mcr_approx",
+      "z_entropy_approx",
+      "z_mean_d1",
+      "z_std_d1",
+      "z_var_d1",
+      "z_rms_d1",
+      "z_kurt_d1",
+      "z_skew_d1",
+      "z_entropy_d1",
+      "z_hilbert_mean",
+      "z_hilbert_std"
+    ],
+    "fault_classes": [
+      "A",
+      "BB",
+      "IB",
+      "MIS",
+      "OB",
+      "UNB"
+    ],
+    "wavelet": "bior3.1",
+    "wavelet_level": 1,
+    "segment_size": 2048,
+    "overlap": 0.5,
+    "sampling_rate_hz": 1500.0,
+    "hyperparameters": {
+      "max_iter": 1000,
+      "solver": "lbfgs",
+      "random_state": 42
+    },
+    "evaluation_metrics": {
+      "accuracy": 1.0,
+      "precision_macro": 1.0,
+      "precision_weighted": 1.0,
+      "recall_macro": 1.0,
+      "recall_weighted": 1.0,
+      "f1_macro": 1.0,
+      "f1_weighted": 1.0,
+      "confusion_matrix": [
+        [
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "classification_report": {
+        "A": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 5.0
+        },
+        "BB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "IB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "MIS": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "OB": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 3.0
+        },
+        "UNB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 0.3333333333333333,
+          "recall": 0.3333333333333333,
+          "f1-score": 0.3333333333333333,
+          "support": 8.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 8.0
+        }
+      }
+    }
+  },
+  "decision_tree": {
+    "model_file": "decision_tree.joblib",
+    "model_version": "1.0.0",
+    "training_date": "2026-10-12 14:34:28 UTC",
+    "feature_names": [
+      "x_mean_approx",
+      "x_std_approx",
+      "x_var_approx",
+      "x_rms_approx",
+      "x_kurt_approx",
+      "x_skew_approx",
+      "x_zcr_approx",
+      "x_mcr_approx",
+      "x_entropy_approx",
+      "x_mean_d1",
+      "x_std_d1",
+      "x_var_d1",
+      "x_rms_d1",
+      "x_kurt_d1",
+      "x_skew_d1",
+      "x_entropy_d1",
+      "x_hilbert_mean",
+      "x_hilbert_std",
+      "y_mean_approx",
+      "y_std_approx",
+      "y_var_approx",
+      "y_rms_approx",
+      "y_kurt_approx",
+      "y_skew_approx",
+      "y_zcr_approx",
+      "y_mcr_approx",
+      "y_entropy_approx",
+      "y_mean_d1",
+      "y_std_d1",
+      "y_var_d1",
+      "y_rms_d1",
+      "y_kurt_d1",
+      "y_skew_d1",
+      "y_entropy_d1",
+      "y_hilbert_mean",
+      "y_hilbert_std",
+      "z_mean_approx",
+      "z_std_approx",
+      "z_var_approx",
+      "z_rms_approx",
+      "z_kurt_approx",
+      "z_skew_approx",
+      "z_zcr_approx",
+      "z_mcr_approx",
+      "z_entropy_approx",
+      "z_mean_d1",
+      "z_std_d1",
+      "z_var_d1",
+      "z_rms_d1",
+      "z_kurt_d1",
+      "z_skew_d1",
+      "z_entropy_d1",
+      "z_hilbert_mean",
+      "z_hilbert_std"
+    ],
+    "fault_classes": [
+      "A",
+      "BB",
+      "IB",
+      "MIS",
+      "OB",
+      "UNB"
+    ],
+    "wavelet": "bior3.1",
+    "wavelet_level": 1,
+    "segment_size": 2048,
+    "overlap": 0.5,
+    "sampling_rate_hz": 1500.0,
+    "hyperparameters": {
+      "max_depth": 10,
+      "min_samples_split": 5,
+      "min_samples_leaf": 2,
+      "criterion": "gini",
+      "random_state": 42
+    },
+    "evaluation_metrics": {
+      "accuracy": 1.0,
+      "precision_macro": 1.0,
+      "precision_weighted": 1.0,
+      "recall_macro": 1.0,
+      "recall_weighted": 1.0,
+      "f1_macro": 1.0,
+      "f1_weighted": 1.0,
+      "confusion_matrix": [
+        [
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "classification_report": {
+        "A": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 5.0
+        },
+        "BB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "IB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "MIS": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "OB": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 3.0
+        },
+        "UNB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 0.3333333333333333,
+          "recall": 0.3333333333333333,
+          "f1-score": 0.3333333333333333,
+          "support": 8.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 8.0
+        }
+      }
+    }
+  },
+  "knn": {
+    "model_file": "knn.joblib",
+    "model_version": "1.0.0",
+    "training_date": "2026-10-12 14:34:28 UTC",
+    "feature_names": [
+      "x_mean_approx",
+      "x_std_approx",
+      "x_var_approx",
+      "x_rms_approx",
+      "x_kurt_approx",
+      "x_skew_approx",
+      "x_zcr_approx",
+      "x_mcr_approx",
+      "x_entropy_approx",
+      "x_mean_d1",
+      "x_std_d1",
+      "x_var_d1",
+      "x_rms_d1",
+      "x_kurt_d1",
+      "x_skew_d1",
+      "x_entropy_d1",
+      "x_hilbert_mean",
+      "x_hilbert_std",
+      "y_mean_approx",
+      "y_std_approx",
+      "y_var_approx",
+      "y_rms_approx",
+      "y_kurt_approx",
+      "y_skew_approx",
+      "y_zcr_approx",
+      "y_mcr_approx",
+      "y_entropy_approx",
+      "y_mean_d1",
+      "y_std_d1",
+      "y_var_d1",
+      "y_rms_d1",
+      "y_kurt_d1",
+      "y_skew_d1",
+      "y_entropy_d1",
+      "y_hilbert_mean",
+      "y_hilbert_std",
+      "z_mean_approx",
+      "z_std_approx",
+      "z_var_approx",
+      "z_rms_approx",
+      "z_kurt_approx",
+      "z_skew_approx",
+      "z_zcr_approx",
+      "z_mcr_approx",
+      "z_entropy_approx",
+      "z_mean_d1",
+      "z_std_d1",
+      "z_var_d1",
+      "z_rms_d1",
+      "z_kurt_d1",
+      "z_skew_d1",
+      "z_entropy_d1",
+      "z_hilbert_mean",
+      "z_hilbert_std"
+    ],
+    "fault_classes": [
+      "A",
+      "BB",
+      "IB",
+      "MIS",
+      "OB",
+      "UNB"
+    ],
+    "wavelet": "bior3.1",
+    "wavelet_level": 1,
+    "segment_size": 2048,
+    "overlap": 0.5,
+    "sampling_rate_hz": 1500.0,
+    "hyperparameters": {
+      "n_neighbors": 5,
+      "weights": "distance",
+      "metric": "minkowski"
+    },
+    "evaluation_metrics": {
+      "accuracy": 1.0,
+      "precision_macro": 1.0,
+      "precision_weighted": 1.0,
+      "recall_macro": 1.0,
+      "recall_weighted": 1.0,
+      "f1_macro": 1.0,
+      "f1_weighted": 1.0,
+      "confusion_matrix": [
+        [
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "classification_report": {
+        "A": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 5.0
+        },
+        "BB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "IB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "MIS": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "OB": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 3.0
+        },
+        "UNB": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 0.3333333333333333,
+          "recall": 0.3333333333333333,
+          "f1-score": 0.3333333333333333,
+          "support": 8.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 8.0
+        }
+      }
+    }
+  }
+}

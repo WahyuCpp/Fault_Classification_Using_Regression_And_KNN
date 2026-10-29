@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}MONTREAL-VT Machine Learning Models{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Trained Classifier Models & Evaluation Metrics</span>
+                <button id="btnRetrainAll" class="btn btn-sm btn-outline-success">🔄 Retrain All Models</button>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-0">
+                    Feature extraction utilizes PyWavelets Discrete Wavelet Transform (<code>bior3.1</code>, level 1)
+                    combined with statistical moments (mean, std, var, RMS, kurtosis, skewness, ZCR, MCR, Shannon entropy)
+                    and Hilbert transform amplitude envelopes. Segmentation is performed over 2048-sample windows with 50% overlap.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comparison Table Card -->
+<div class="card mb-3">
+    <div class="card-header">
+        <span>Classifier Comparison Table</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table-dark-custom mb-0">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Accuracy</th>
+                        <th>Precision (Macro)</th>
+                        <th>Recall (Macro)</th>
+                        <th>F1-Score (Macro)</th>
+                        <th>Version</th>
+                        <th>Trained Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="modelsComparisonBody">
+                    <tr><td colspan="8" class="text-center text-muted py-3">Loading models metadata...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Model Details Breakdown -->
+<div class="row g-3" id="modelDetailsContainer">
+    <!-- Populated dynamically -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadModels() {
+    const res = await fetch('/api/models');
+    if (!res.ok) return;
+    const models = await res.json();
+
+    const tbody = document.getElementById('modelsComparisonBody');
+    const detailsContainer = document.getElementById('modelDetailsContainer');
+
+    const entries = Object.entries(models);
+    if (entries.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">No trained models found. Click "Retrain All Models".</td></tr>';
+        return;
+    }
+
+    let rows = '';
+    let cards = '';
+
+    for (const [name, meta] of entries) {
+        const metrics = meta.evaluation_metrics || {};
+        const acc = metrics.accuracy !== undefined ? (metrics.accuracy * 100).toFixed(1) + '%' : '-';
+        const prec = metrics.precision_macro !== undefined ? (metrics.precision_macro * 100).toFixed(1) + '%' : '-';
+        const rec = metrics.recall_macro !== undefined ? (metrics.recall_macro * 100).toFixed(1) + '%' : '-';
+        const f1 = metrics.f1_macro !== undefined ? (metrics.f1_macro * 100).toFixed(1) + '%' : '-';
+
+        rows += `
+            <tr>
+                <td><strong>${name.replace('_', ' ').toUpperCase()}</strong></td>
+                <td><span class="badge-custom badge-healthy">${acc}</span></td>
+                <td>${prec}</td>
+                <td>${rec}</td>
+                <td><strong>${f1}</strong></td>
+                <td>${meta.model_version || '1.0.0'}</td>
+                <td class="small text-muted">${meta.training_date || '-'}</td>
+                <td><span class="badge-custom badge-info">Persisted</span></td>
+            </tr>
+        `;
+
+        cards += `
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <span>${name.replace('_', ' ').toUpperCase()} Parameters</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="small mb-2"><strong>Fault Classes:</strong> ${(meta.fault_classes || []).join(', ')}</div>
+                        <div class="small mb-2"><strong>Features Count:</strong> ${(meta.feature_names || []).length} multi-axis features</div>
+                        <div class="small mb-2"><strong>Segment Window:</strong> ${meta.segment_size} samples (${meta.overlap * 100}% overlap)</div>
+                        <div class="small text-muted"><strong>Hyperparameters:</strong></div>
+                        <pre class="p-2 rounded" style="background:#0f172a; color:#38bdf8; font-size:0.75rem;">${JSON.stringify(meta.hyperparameters, null, 2)}</pre>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    tbody.innerHTML = rows;
+    detailsContainer.innerHTML = cards;
+}
+
+document.getElementById('btnRetrainAll').addEventListener('click', async () => {
+    const btn = document.getElementById('btnRetrainAll');
+    btn.disabled = true;
+    btn.innerText = 'Training...';
+    try {
+        await fetch('/api/pipeline/train_models', { method: 'POST' });
+        await loadModels();
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '🔄 Retrain All Models';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', loadModels);
+</script>
+{% endblock %}
+

@@ -1,27 +1,38 @@
-# 1. Setup Environment
-if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
-    Write-Error "Python is not installed or not in your PATH."
+# ============================================================
+# MONTREAL-VT  —  First-Time Setup Script
+# Run once to create the virtual environment and install deps.
+# After setup, use  .\run.ps1  to start the application.
+# ============================================================
+
+$projectDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+# 1. Verify Python 3.12 is available
+if (-not (Get-Command py -ErrorAction SilentlyContinue)) {
+    Write-Error "Python Launcher (py.exe) not found. Install Python 3.12 from python.org."
     Exit 1
 }
 
-Write-Host "Setting up Python environment..." -ForegroundColor Cyan
-python -m venv .venv
-& .venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+# 2. Create virtual environment with Python 3.12
+Write-Host "Creating virtual environment (.venv)..." -ForegroundColor Cyan
+py -3.12 -m venv "$projectDir\.venv"
 
-# 2. Extract credentials from .env to run SQL
-if (Test-Path .env) {
-    Get-Content .env | Foreach-Object {
-        $name, $value = $_.split('=', 2)
-        if ($name -and $value) { Set-Item -Path "env:$name" -Value $value }
-    }
+# 3. Install dependencies
+Write-Host "Installing dependencies from requirements.txt..." -ForegroundColor Cyan
+& "$projectDir\.venv\Scripts\python.exe" -m pip install --upgrade pip
+& "$projectDir\.venv\Scripts\pip.exe" install -r "$projectDir\requirements.txt"
+
+# 4. Copy .env template if .env does not already exist
+if (-not (Test-Path "$projectDir\.env")) {
+    Copy-Item "$projectDir\.env.example" "$projectDir\.env"
+    Write-Host ".env created from .env.example — edit it to set DB credentials." -ForegroundColor Yellow
 }
 
-Write-Host "Running database migration..." -ForegroundColor Cyan
-#Get-Content
-Get-Content database.sql | mysql -h $env:DB_HOST -u $env:DB_USER -p"$env:DB_PASSWORD"
+# 5. Initialise the database (creates SQLite fallback automatically if MySQL is offline)
+Write-Host "Initialising database..." -ForegroundColor Cyan
+& "$projectDir\.venv\Scripts\python.exe" -m src.database.init_database
 
-# 3. Run the Application
-Write-Host "Launching app.py..." -ForegroundColor Green
-python app.py
+# 6. Done
+Write-Host ""
+Write-Host "Setup complete!" -ForegroundColor Green
+Write-Host "To start the application run:  .\run.ps1" -ForegroundColor Green
+Write-Host ""

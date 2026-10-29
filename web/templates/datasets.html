@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}MONTREAL-VT Datasets Management{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Dataset Repository & Preprocessing Hub</span>
+                <div>
+                    <button id="btnRunPreprocessing" class="btn btn-sm btn-outline-info me-2">⚙ Run Preprocessing Pipeline</button>
+                    <button id="btnRunMLTraining" class="btn btn-sm btn-outline-success">🚀 Train ML Models</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-0">
+                    Input datasets are stored under <code>data/cleaned_data/</code> and processed into <code>data/processed/</code>.
+                    Select any dataset to immediately assign it to the continuous simulation replay engine.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <span>Available Motor Datasets</span>
+        <button id="btnRefreshDatasets" class="btn btn-sm btn-outline-secondary">Refresh</button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table-dark-custom mb-0">
+                <thead>
+                    <tr>
+                        <th>Condition Folder</th>
+                        <th>File Name</th>
+                        <th>Class Code</th>
+                        <th>Rows</th>
+                        <th>Sampling Rate</th>
+                        <th>Approx Duration</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="datasetsTableBody">
+                    <tr><td colspan="8" class="text-center text-muted py-3">Scanning datasets...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadDatasets() {
+    const res = await fetch('/api/datasets');
+    if (!res.ok) return;
+    const datasets = await res.json();
+
+    const tbody = document.getElementById('datasetsTableBody');
+    if (datasets.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">No datasets found. Run generation script or import CSVs.</td></tr>';
+        return;
+    }
+
+    let rows = '';
+    for (const d of datasets) {
+        const activeBadge = d.is_active ? '<span class="badge-custom badge-healthy">Active Replay</span>' : '<span class="badge-custom badge-info">Ready</span>';
+        rows += `
+            <tr>
+                <td><strong>${d.condition}</strong></td>
+                <td><code>${d.file_name}</code></td>
+                <td><span class="badge-custom badge-info">${d.fault_code}</span></td>
+                <td>${d.row_count.toLocaleString()}</td>
+                <td>${d.sampling_rate_hz} Hz</td>
+                <td>${d.duration_sec ? d.duration_sec.toFixed(1) + ' s' : '-'}</td>
+                <td>${activeBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary py-0" onclick="selectDataset('${d.file_path}')">
+                        Select for Replay
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+    tbody.innerHTML = rows;
+}
+
+async function selectDataset(filePath) {
+    const res = await fetch('/api/control/replay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'load_dataset', file_path: filePath })
+    });
+    if (res.ok) {
+        loadDatasets();
+    }
+}
+
+document.getElementById('btnRunPreprocessing').addEventListener('click', async () => {
+    const btn = document.getElementById('btnRunPreprocessing');
+    btn.disabled = true;
+    btn.innerText = 'Preprocessing running...';
+    try {
+        const res = await fetch('/api/pipeline/preprocess', { method: 'POST' });
+        const data = await res.json();
+        alert(`Preprocessing complete! Processed ${data.processed_count} datasets.`);
+    } catch (e) {
+        alert('Preprocessing encountered an error: ' + e);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '⚙ Run Preprocessing Pipeline';
+        loadDatasets();
+    }
+});
+
+document.getElementById('btnRunMLTraining').addEventListener('click', async () => {
+    const btn = document.getElementById('btnRunMLTraining');
+    btn.disabled = true;
+    btn.innerText = 'Training models...';
+    try {
+        const res = await fetch('/api/pipeline/train_models', { method: 'POST' });
+        const data = await res.json();
+        alert('Model training complete! View results on ML Models page.');
+    } catch (e) {
+        alert('Training error: ' + e);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '🚀 Train ML Models';
+    }
+});
+
+document.getElementById('btnRefreshDatasets').addEventListener('click', loadDatasets);
+document.addEventListener('DOMContentLoaded', loadDatasets);
+</script>
+{% endblock %}
+

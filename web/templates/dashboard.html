@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}MONTREAL-VT Motor Condition Monitoring - Dashboard{% endblock %}
+
+{% block content %}
+<!-- Top Controls Toolbar -->
+<div class="control-toolbar">
+    <!-- Replay Controls -->
+    <div class="d-flex align-items-center gap-2">
+        <button id="btnStart" class="control-btn btn-start">▶ Start Replay</button>
+        <button id="btnPause" class="control-btn btn-pause">⏸ Pause</button>
+        <button id="btnResume" class="control-btn btn-start" style="display:none;">⏯ Resume</button>
+        <button id="btnStop" class="control-btn btn-stop">⏹ Stop</button>
+        <button id="btnReset" class="control-btn btn-reset">↺ Reset</button>
+    </div>
+
+    <div class="vr mx-2 text-secondary"></div>
+
+    <!-- Data Source & Dataset -->
+    <div class="d-flex align-items-center gap-2">
+        <label class="small text-muted mb-0">Source:</label>
+        <select id="sourceSelect" class="form-select-dark">
+            <option value="csv" selected>CSV Simulation (Replay)</option>
+            <option value="live" disabled>Live Acquisition (ESP32-S3)</option>
+        </select>
+
+        <label class="small text-muted mb-0">Dataset:</label>
+        <select id="datasetSelect" class="form-select-dark" style="max-width: 220px;">
+            <option value="">Loading datasets...</option>
+        </select>
+
+        <div class="form-check form-check-inline mb-0 ms-1">
+            <input class="form-check-input" type="checkbox" id="loopCheckbox" checked>
+            <label class="form-check-label small text-muted" for="loopCheckbox">Loop</label>
+        </div>
+    </div>
+
+    <div class="vr mx-2 text-secondary"></div>
+
+    <!-- Playback Speed -->
+    <div class="d-flex align-items-center gap-2">
+        <label class="small text-muted mb-0">Speed:</label>
+        <select id="speedSelect" class="form-select-dark">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="2.0">2.0×</option>
+            <option value="max">Max (Test)</option>
+        </select>
+    </div>
+
+    <div class="vr mx-2 text-secondary"></div>
+
+    <!-- Signal Processing Controls -->
+    <div class="d-flex align-items-center gap-2">
+        <label class="small text-muted mb-0">Window (N):</label>
+        <select id="windowSizeSelect" class="form-select-dark">
+            <option value="256">256 samples</option>
+            <option value="512">512 samples</option>
+            <option value="1024" selected>1024 samples</option>
+            <option value="2048">2048 samples</option>
+        </select>
+
+        <label class="small text-muted mb-0">FFT Win:</label>
+        <select id="fftWindowSelect" class="form-select-dark">
+            <option value="hann" selected>Hann</option>
+            <option value="hamming">Hamming</option>
+            <option value="blackman">Blackman</option>
+            <option value="rectangular">Rectangular</option>
+        </select>
+    </div>
+
+    <div class="vr mx-2 text-secondary"></div>
+
+    <!-- ML Model Switcher -->
+    <div class="d-flex align-items-center gap-2">
+        <label class="small text-muted mb-0">ML Model:</label>
+        <select id="mlModelSelect" class="form-select-dark">
+            <option value="knn" selected>K-Nearest Neighbors</option>
+            <option value="decision_tree">Decision Tree</option>
+            <option value="logistic_regression">Logistic Regression</option>
+        </select>
+    </div>
+
+    <!-- Axis Visibility Toggles -->
+    <div class="d-flex align-items-center gap-2 ms-auto">
+        <span class="small text-muted">Axes:</span>
+        <div class="form-check form-check-inline mb-0">
+            <input class="form-check-input" type="checkbox" id="axisXToggle" checked>
+            <label class="form-check-label small text-info" for="axisXToggle">X</label>
+        </div>
+        <div class="form-check form-check-inline mb-0">
+            <input class="form-check-input" type="checkbox" id="axisYToggle" checked>
+            <label class="form-check-label small text-success" for="axisYToggle">Y</label>
+        </div>
+        <div class="form-check form-check-inline mb-0">
+            <input class="form-check-input" type="checkbox" id="axisZToggle" checked>
+            <label class="form-check-label small text-danger" for="axisZToggle">Z</label>
+        </div>
+    </div>
+</div>
+
+<!-- Live Values KPI Row -->
+<div class="row g-2 mb-3">
+    <!-- Vibration Acceleration Card -->
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-label">Acceleration X / Y / Z</div>
+            <div class="stat-value" style="font-size: 1.15rem;">
+                <span class="text-info" id="valAccX">0.00</span> /
+                <span class="text-success" id="valAccY">0.00</span> /
+                <span class="text-danger" id="valAccZ">9.81</span>
+                <span class="small text-muted">m/s²</span>
+            </div>
+            <div class="stat-sub">
+                RMS Total: <strong id="valRmsTotal" class="text-white">0.00</strong> m/s²
+                <span id="severityBadge" class="badge-custom badge-healthy ms-1">Zone A: Good</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current & State Card -->
+    <div class="col-md-2 col-6">
+        <div class="stat-card">
+            <div class="stat-label">Winding Current</div>
+            <div class="stat-value">
+                <span id="valCurrent">0.42</span> <span class="small text-muted">A</span>
+            </div>
+            <div class="stat-sub">
+                RMS: <span id="valCurrentRms">0.42</span> A
+                <span id="currentStatusBadge" class="badge-custom badge-healthy ms-1">Normal</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Temperature Card -->
+    <div class="col-md-2 col-6">
+        <div class="stat-card">
+            <div class="stat-label">Casing Temperature</div>
+            <div class="stat-value">
+                <span id="valTemp">43.2</span> <span class="small text-muted">°C</span>
+            </div>
+            <div class="stat-sub">
+                Limit: 70.0 °C
+                <span id="tempStatusBadge" class="badge-custom badge-healthy ms-1">Nominal</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rotational Speed Card -->
+    <div class="col-md-2 col-6">
+        <div class="stat-card">
+            <div class="stat-label">Rotational Speed</div>
+            <div class="stat-value">
+                <span id="valRpm">1450</span> <span class="small text-muted">RPM</span>
+            </div>
+            <div class="stat-sub">
+                1X Shaft: <span id="valShaftFreq">24.17</span> Hz
+            </div>
+        </div>
+    </div>
+
+    <!-- Machine Learning & Diagnostic Card -->
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-label">Machine Condition Prediction</div>
+            <div class="stat-value" style="font-size: 1.15rem;">
+                <span id="mlPredictionBadge" class="badge-custom badge-info">Healthy (A)</span>
+            </div>
+            <div class="stat-sub">
+                Model: <span id="activeModelLabel" class="text-white">KNN</span> |
+                Confidence: <strong id="mlConfidence">98.5%</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Plots Row 1: Time Domain & Frequency Spectrum -->
+<div class="row g-3 mb-3">
+    <!-- Vibration Time-Domain Plot -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <span>Vibration Time Domain (Continuous Oscilloscope)</span>
+                <span class="small text-muted" id="timeDomainInfo">N: 1024 samples | fs: 1500 Hz</span>
+            </div>
+            <div class="card-body p-2">
+                <div id="plotTimeDomain" class="plot-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frequency Spectrum (FFT) Plot -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <span>Frequency Spectrum (Continuous FFT)</span>
+                <span class="small text-muted" id="fftInfo">Δf: 1.46 Hz | Nyquist: 750 Hz | Window: Hann</span>
+            </div>
+            <div class="card-body p-2">
+                <div id="plotFFT" class="plot-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Plots Row 2: Severity Trend, Current & Temperature -->
+<div class="row g-3 mb-3">
+    <!-- Vibration Severity RMS Trend -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <span>Vibration Severity Trend</span>
+                <span class="small text-muted">ISO 10816 / 13373</span>
+            </div>
+            <div class="card-body p-2">
+                <div id="plotSeverity" class="plot-container-sm"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Motor Current Trend -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <span>Motor Current Trend</span>
+                <span class="small text-muted">Limit: >0.5 A (Demo)</span>
+            </div>
+            <div class="card-body p-2">
+                <div id="plotCurrent" class="plot-container-sm"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Motor Temperature Trend -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <span>Casing Temperature Trend</span>
+                <span class="small text-muted">Limit: 70 °C</span>
+            </div>
+            <div class="card-body p-2">
+                <div id="plotTemperature" class="plot-container-sm"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Diagnostics & Intelligence Row -->
+<div class="row g-3">
+    <!-- Characteristic Frequencies Card -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <span>Theoretical Characteristic Frequencies</span>
+                <span class="small text-muted">6205-2RS Bearing</span>
+            </div>
+            <div class="card-body p-2">
+                <table class="table-dark-custom">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Description</th>
+                            <th>Theoretical (Hz)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bearingFreqTable">
+                        <tr><td>1× fr</td><td>Shaft Rotational</td><td id="freq1x">24.17</td></tr>
+                        <tr><td>2× fr</td><td>2nd Shaft Harmonic</td><td id="freq2x">48.33</td></tr>
+                        <tr><td>BPFO</td><td>Outer-Race Defect</td><td id="freqBPFO">86.53</td></tr>
+                        <tr><td>BPFI</td><td>Inner-Race Defect</td><td id="freqBPFI">130.97</td></tr>
+                        <tr><td>BSF</td><td>Ball Spin Defect</td><td id="freqBSF">56.78</td></tr>
+                        <tr><td>FTF</td><td>Fundamental Train / Cage</td><td id="freqFTF">9.61</td></tr>
+                        <tr><td>f_pp</td><td>Pole-Pass Frequency</td><td id="freqPP">6.67</td></tr>
+                    </tbody>
+                </table>
+                <div class="small text-muted mt-2">
+                    Theoretical kinematic calculations based on 1450 RPM and bearing geometry.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Potential Faults Panel (Rule-Based Indications) -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <span>Potential Faults (Rule-Based Indications)</span>
+                <span class="small text-muted">Spectral Aid</span>
+            </div>
+            <div class="card-body p-2">
+                <table class="table-dark-custom">
+                    <thead>
+                        <tr>
+                            <th>Potential Fault</th>
+                            <th>Evidence</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="potentialFaultsTable">
+                        <tr>
+                            <td>Evaluating...</td>
+                            <td>Awaiting FFT spectral data</td>
+                            <td><span class="badge-custom badge-info">Nominal</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="disclaimer-box" id="ruleDisclaimer">
+                    Rule-based diagnostic indication only. Requires validation with machine operating condition and ML/model results.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ML Classification Detail Panel -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <span>Machine Learning Fault Probabilities</span>
+                <span class="small text-muted" id="mlModelDetail">KNN Pipeline</span>
+            </div>
+            <div class="card-body p-2">
+                <div id="mlProbabilitiesContainer">
+                    <div class="small text-muted mb-2">Class Probability Distribution:</div>
+                    <div id="mlProbBars"></div>
+                </div>
+                <div class="mt-3 p-2 rounded" style="background: rgba(15, 23, 42, 0.6); border: 1px solid #334155; font-size: 0.8rem;">
+                    <div><strong>Input Window:</strong> <span id="mlInputSize">1024</span> samples (X, Y, Z)</div>
+                    <div><strong>Wavelet:</strong> bior3.1 (level 1) + Hilbert Transform</div>
+                    <div><strong>Scaler:</strong> StandardScaler (Pipeline)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/dashboard.js"></script>
+{% endblock %}
+

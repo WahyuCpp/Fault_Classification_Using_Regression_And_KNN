@@ -10,10 +10,11 @@ The system combines **embedded firmware, signal processing, relational database 
 
 Two primary machine learning approaches are planned:
 
-- **K-Nearest Neighbors (KNN):** Classifies motor operating conditions based on extracted sensor features.
-- **Linear Regression:** Models historical condition indicators to estimate degradation trends and potential threshold-crossing times.
+- **K-Nearest Neighbors (KNN):** Classifies motor possible faults based on extracted sensor features.
+- **Linear Regression:** Models historical condition indicators to estimate degradation trends and remaining useful life.
 
-The project is currently **under active development**. Data cleaning has been completed, while MySQL database initialization is in progress. Other subsystems are scheduled for subsequent development.
+The project is currently **under active development**. 
+<!-- Data cleaning has been completed, while MySQL database initialization is in progress. Other subsystems are scheduled for subsequent development. -->
 
 ## Technology Stack
 
@@ -33,7 +34,7 @@ The project is currently **under active development**. Data cleaning has been co
 The proposed system follows a modular architecture:
 
 ```text
-            MOTOR UNDER MONITORING
+              INDUCTION MOTOR
                       |
                       v
               SENSOR ACQUISITION
@@ -73,7 +74,7 @@ This architecture represents the intended implementation and is subject to revis
 
 ### 1. Database Initialization — MySQL
 
-**Status: In Progress**
+**Status: Completed**
 
 The database module manages structured historical measurements, timestamps, and processed monitoring results.
 
@@ -87,7 +88,7 @@ Planned functionality includes:
 
 ### 2. Data Cleaning and Exploratory Data Analysis
 
-**Status: Data Cleaning Completed | EDA Pending**
+**Status: Data Cleaning Completed | EDA Testing**
 
 The data processing module prepares acquired measurements for subsequent statistical analysis and machine learning.
 
@@ -109,7 +110,7 @@ Planned EDA activities include:
 
 ### 3. Motor Fault Classification — KNN
 
-**Status: Planned**
+**Status: Testing**
 
 K-Nearest Neighbors is intended to classify motor operating conditions using features derived from sensor measurements.
 
@@ -146,7 +147,7 @@ Model performance will be evaluated using MAE, RMSE, and coefficient of determin
 
 ### 5. Embedded Firmware
 
-**Status: Planned**
+**Status: In Progress**
 
 Firmware development will use C/C++ with Arduino-compatible microcontrollers.
 
@@ -167,7 +168,7 @@ Hardware configuration and communication protocols will be documented as develop
 
 ### 6. Web-Based Monitoring Interface
 
-**Status: Planned**
+**Status: In Progress**
 
 A JavaScript-based frontend will be developed using an npm-managed development environment.
 
@@ -244,11 +245,9 @@ The following commands describe the intended development workflow. They are not 
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/<username>/<repository>.git
-cd <repository>
+git clone https://github.com/mwahyufaa/Fault_Classification_Using_egression_And_KNN.git
+cd Fault_Classification_Using_egression_And_KNN
 ```
-
-Replace the placeholders with the actual GitHub repository information.
 
 ### Python Environment
 
@@ -315,7 +314,7 @@ Firmware can be compiled and uploaded using either Arduino IDE or PlatformIO, su
 
 ## Development Status
 
-**Current Phase: Data Preparation and Database Development**
+**Current Phase: Signal Processing Handling**
 
 The project is not yet a fully operational motor fault classification system.
 
